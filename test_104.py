@@ -41,7 +41,7 @@ try:
                     	cnt["不拘"]+=1
                	print("=" * 50)
         time.sleep(3)
-        if(next=="下一頁"):
+        if(next.text=="下一頁"):
             break
     print(cnt.most_common(20))
 except requests.ConnectionError:
