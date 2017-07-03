@@ -1,18 +1,21 @@
 import time
 import threading
 class myThread (threading.Thread):
-   def __init__(self, threadID, name,initurl,delay,proxy):
+   def __init__(self, threadID, name,initurl,delay,proxy,dest):
       threading.Thread.__init__(self)
       self.threadID = threadID
       self.name = name
       self.initurl=initurl
       self.delay=delay
       self.proxy=proxy
+      self.dest=dest
+
+
    def run (self):
-       crawyler(self.initurl,self.delay,self.proxy)
+       crawyler(self.initurl,self.delay,self.proxy,self.dest)
 
 
-def crawyler (initurl,delay,proxy):
+def crawyler (initurl,delay,proxy,dest):
     import requests
     from bs4 import BeautifulSoup
     import lxml
@@ -60,14 +63,31 @@ def crawyler (initurl,delay,proxy):
             #         break
             #p+=1
             time.sleep(delay)
-        print(cnt.most_common(20))
+        print(type(cnt.most_common(20)))
+        for key in cnt:
+            print("{}   有{}個工作要求".format(key,cnt.get(key)))
+        print(cnt)
+        # with open("dest.txt", "a", encoding="utf-8") as f:
+        #     f.write("{} \n".format(myThread.name))
+        for key in cnt:
+            print("{}   有{}個工作要求".format(key,cnt.get(key)))
+            with open("anysis104.txt","a",encoding="utf-8") as f:
+                f.write("{}   有{}個工作要求\n".format(key,cnt.get(key)))
+        with open("dest", "a", encoding="utf-8") as f:
+            f.write("前20名的被工作要求的語言:")
+        with open("dest","a",encoding="utf-8") as f:
+            f.write("{}".format(cnt.most_common(20)))
+
+
     except requests.ConnectionError:
             print("Connection aborted")
 if __name__ == '__main__':
     url = "https://www.104.com.tw/jobbank/joblist/joblist.cfm?jobsource=n104bank1&ro=0&keyword=資訊&order=1&asc=0&page="
     url1 = "https://www.104.com.tw/jobbank/joblist/joblist.cfm?jobsource=n104bank1&ro=0&keyword=資料分析&order=1&asc=0&page="
-    thread1=myThread(1,"thread1",url,3,"https://125.224.233.167:3128")
-    thread2=myThread(2,"thread2",url1,2,"https://211.72.239.245:3128")
+    dest="crawler_1.txt"
+    dest1="crawler_2.txt"
+    thread1=myThread(1,"資訊",url,3,"https://125.224.233.167:3128",dest)
+    thread2=myThread(2,"資料分析",url1,2,"https://211.72.239.245:3128",dest1)
     threads=[]
 
     try:
@@ -77,7 +97,7 @@ if __name__ == '__main__':
         threads.append(thread2)
         for t in threads:
             t.join()
-            print("Exiting Main Thread")
+            print(" {} Exiting Main Thread".format(t))
     except:
         pass
 
