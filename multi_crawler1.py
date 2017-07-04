@@ -15,7 +15,7 @@ class myThread (threading.Thread):
        crawyler(self.initurl,self.delay,self.proxy,self.dest)
 
 
-def crawyler (initurl,delay,proxy,dest):
+def crawyler (initurl,delay,proxy,dest_path):
     import requests
     from bs4 import BeautifulSoup
     import lxml
@@ -71,11 +71,11 @@ def crawyler (initurl,delay,proxy,dest):
         #     f.write("{} \n".format(myThread.name))
         for key in cnt:
             print("{}   有{}個工作要求".format(key,cnt.get(key)))
-            with open(dest,"a",encoding="utf-8") as f:
+            with open(dest_path,"a",encoding="utf-8") as f:
                 f.write("{}   有{}個工作要求\n".format(key,cnt.get(key)))
-        with open(dest, "a", encoding="utf-8") as f:
+        with open(dest_path, "a", encoding="utf-8") as f:
             f.write("前20名的被工作要求的語言:")
-        with open(dest,"a",encoding="utf-8") as f:
+        with open(dest_path,"a",encoding="utf-8") as f:
             f.write("{}".format(cnt.most_common(20)))
 
 
