@@ -12,20 +12,21 @@ class myThread (threading.Thread):
 
 
    def run (self):
-       crawyler(self.initurl,self.delay,self.proxy,self.dest)
+       crawyer104(self.initurl,self.delay,self.proxy,self.dest)
 
 
-def crawyler (initurl,delay,proxy,dest_path):
+def crawyer104 (initurl,delay,proxy,dest_path):
     import requests
     from bs4 import BeautifulSoup
     import lxml
     from collections import Counter
     import time
-    cnt=Counter()#比較器
+    import json
+    cnt={}#比較器
     count=1      #偵錯用
     try:
         #p=1 #第一頁
-        for i in range(1,151):
+        for i in range(1,3):
             set1=set()
             url=initurl+str(i)+"&psl=N_A"
             re =requests.get(url,proxy)
@@ -58,26 +59,26 @@ def crawyler (initurl,delay,proxy,dest_path):
                     	    print("不拘")
                     	    #cnt["不拘"]+=1
                	    print("=" * 50)
-            # if(next.text==""):  ##because 149 also "" so 設150頁也是思考重點
-            #     if(p==150):
-            #         break
-            #p+=1
             time.sleep(delay)
-        print(type(cnt.most_common(20)))
+        # print(type(cnt.most_common(20)))
         for key in cnt:
             print("{}   有{}個工作要求".format(key,cnt.get(key)))
-        print(cnt)
+        # print(cnt)
         # with open("dest.txt", "a", encoding="utf-8") as f:
         #     f.write("{} \n".format(myThread.name))
-        for key in cnt:
-            print("{}   有{}個工作要求".format(key,cnt.get(key)))
-            with open(dest_path,"a",encoding="utf-8") as f:
-                f.write("{}   有{}個工作要求\n".format(key,cnt.get(key)))
-        with open(dest_path, "a", encoding="utf-8") as f:
-            f.write("前20名的被工作要求的語言:")
-        with open(dest_path,"a",encoding="utf-8") as f:
-            f.write("{}".format(cnt.most_common(20)))
-
+        # for key in cnt:
+        #     print("{}   有{}個工作要求".format(key,cnt.get(key)))
+        #     with open(dest_path,"a",encoding="utf-8") as f:
+        #         f.write("{}   有{}個工作要求\n".format(key,cnt.get(key)))
+        # with open(dest_path, "a", encoding="utf-8") as f:
+        #     f.write("前20名的被工作要求的語言:")
+        # with open(dest_path,"a",encoding="utf-8") as f:
+        #     f.write("{}".format(cnt.most_common(20)))
+        # js=json.dumps(cnt,sort_keys=True,ensure_ascii=False)
+        # print(type(js))
+        with open(dest_path,'a',encoding="utf-8") as f:
+            f.write(json.dumps(cnt,sort_keys=True,ensure_ascii=False))
+            f.close()
 
     except requests.ConnectionError:
             print("Connection aborted")
@@ -93,6 +94,12 @@ if __name__ == '__main__':
     try:
         thread1.start()
         thread2.start()
+        with open(dest,'a',encoding="utf-8") as f :
+            f.write(thread1.name+"\n")
+            f.close()
+        with open(dest1,'a',encoding="utf-8") as f :
+            f.write(thread2.name+"\n")
+            f.close()
         threads.append(thread1)
         threads.append(thread2)
         for t in threads:
