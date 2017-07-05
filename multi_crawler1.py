@@ -26,7 +26,7 @@ def crawyer104 (initurl,delay,proxy,dest_path):
     count=1      #偵錯用
     try:
         #p=1 #第一頁
-        for i in range(1,3):
+        for i in range(1,150):
             set1=set()
             url=initurl+str(i)+"&psl=N_A"
             re =requests.get(url,proxy)
@@ -82,24 +82,74 @@ def crawyer104 (initurl,delay,proxy,dest_path):
 
     except requests.ConnectionError:
             print("Connection aborted")
+
+def crawler1111(initurl,delay,proxy,dest_path):
+    import requests
+    from bs4 import BeautifulSoup as bs4
+    import time
+    import lxml
+    dict1 = {}
+    list1 = []
+    try:
+        for i in range(1, 151):
+            set1 = set()
+            url = initurl + str(i)
+            re = requests.get(url,proxy)
+            soup = bs4(re.text, 'lxml')
+            # print(soup.select(".jbInfoin > h3 > a "))
+            for murl in soup.select(".jbInfoin > h3 > a"):
+                # nu=str(murl["href"]).split("/")[1].split("&")[0]
+                nu = str(murl["href"].split('/')[4])
+                set1.add(nu)
+            # print(set1)
+            for surl in set1:
+                url1 = "https://www.1111.com.tw/job/" + str(surl) + "/"
+                re1 = requests.get(url1, "http://59.126.48.8:8080")
+                # print(re1.text)
+                soup = bs4(re1.text, 'lxml')
+                # s1 = soup.findAll("div",attrs={"class":"listContent"})[12]
+                # print(s1)
+                # print("=="*50)
+                for title in soup.select(".logoTitle > h1"):
+                    sumtitle = title.text
+                    # dict1.setdefault(sumtitle)
+                    print(sumtitle)
+                    for tool in soup.findAll("div", {"class": "floatL w65"}):
+                        a = (tool.text).replace("  ", "").split("要求條件")[1].split("應徵方式")[0].replace("\n", "").replace(
+                            ":", "=")
+                        list1.append(a)
+                        dict1[sumtitle] = list1
+                        print(a)
+                        print("==" * 50)
+            time.sleep(delay)
+        print(dict1)
+        with open(dest_path,"a") as f:
+            f.write(dict1)
+
+
+    except:
+        pass
+
+
+
 if __name__ == '__main__':
-    url = "https://www.104.com.tw/jobbank/joblist/joblist.cfm?jobsource=n104bank1&ro=0&keyword=資訊&order=1&asc=0&page="
-    url1 = "https://www.104.com.tw/jobbank/joblist/joblist.cfm?jobsource=n104bank1&ro=0&keyword=資料分析&order=1&asc=0&page="
+    url = "https://www.104.com.tw/jobbank/joblist/joblist.cfm?jobsource=n104bank1&ro=0&keyword=%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB&order=1&asc=0&page="
+    url1 = "https://www.1111.com.tw/job-bank/job-index.asp?si=1&ks=%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB&fs=1&page="
     dest="crawler_1.txt"
     dest1="crawler_2.txt"
-    thread1=myThread(1,"資訊",url,3,"https://125.224.233.167:3128",dest)
-    thread2=myThread(2,"資料分析",url1,2,"https://211.72.239.245:3128",dest1)
+    thread1=myThread(1,"104",url,3,"https://125.224.233.167:3128",dest)
+    thread2=myThread(2,"1111",url1,2,"https:111.242.191.115:53281",dest1)
     threads=[]
 
     try:
         thread1.start()
         thread2.start()
-        with open(dest,'a',encoding="utf-8") as f :
-            f.write(thread1.name+"\n")
-            f.close()
-        with open(dest1,'a',encoding="utf-8") as f :
-            f.write(thread2.name+"\n")
-            f.close()
+        # with open(dest,'a',encoding="utf-8") as f :
+        #     f.write(thread1.name+"\n")
+        #     f.close()
+        # with open(dest1,'a',encoding="utf-8") as f :
+        #     f.write(thread2.name+"\n")
+        #     f.close()
         threads.append(thread1)
         threads.append(thread2)
         for t in threads:
