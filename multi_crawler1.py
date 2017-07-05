@@ -14,6 +14,19 @@ class myThread (threading.Thread):
    def run (self):
        crawyer104(self.initurl,self.delay,self.proxy,self.dest)
 
+class myThread1 (threading.Thread):
+   def __init__(self, threadID, name,initurl,delay,proxy,dest):
+      threading.Thread.__init__(self)
+      self.threadID = threadID
+      self.name = name
+      self.initurl=initurl
+      self.delay=delay
+      self.proxy=proxy
+      self.dest=dest
+
+
+   def run (self):
+       crawler1111(self.initurl,self.delay,self.proxy,self.dest)
 
 def crawyer104 (initurl,delay,proxy,dest_path):
     import requests
@@ -32,8 +45,8 @@ def crawyer104 (initurl,delay,proxy,dest_path):
             re =requests.get(url,proxy)
             soup=BeautifulSoup(re.text,'lxml')
             #print(soup.select(".job_name > a"))
-            next=soup.select(".mar_L10 ")[0]
-            print(next.text)
+            # next=soup.select(".mar_L10 ")[0]
+            # print(next.text)
             for murl in soup.select(".job_name > a"):
                 nu=str(murl["href"]).split("jobno=")[1].split("&")[0]
                 set1.add(nu)
@@ -90,6 +103,7 @@ def crawler1111(initurl,delay,proxy,dest_path):
     import lxml
     dict1 = {}
     list1 = []
+    count = 1
     try:
         for i in range(1, 151):
             set1 = set()
@@ -113,7 +127,9 @@ def crawler1111(initurl,delay,proxy,dest_path):
                 for title in soup.select(".logoTitle > h1"):
                     sumtitle = title.text
                     # dict1.setdefault(sumtitle)
+                    print("第%d筆更新" % count)
                     print(sumtitle)
+                    count+=1
                     for tool in soup.findAll("div", {"class": "floatL w65"}):
                         a = (tool.text).replace("  ", "").split("要求條件")[1].split("應徵方式")[0].replace("\n", "").replace(
                             ":", "=")
@@ -122,9 +138,10 @@ def crawler1111(initurl,delay,proxy,dest_path):
                         print(a)
                         print("==" * 50)
             time.sleep(delay)
-        print(dict1)
-        with open(dest_path,"a") as f:
-            f.write(dict1)
+        print(type(dict1))
+        with open(dest_path,"a",encoding="utf-8") as f:
+            f.write(str(dict1))
+            f.close()
 
 
     except:
@@ -138,7 +155,7 @@ if __name__ == '__main__':
     dest="crawler_1.txt"
     dest1="crawler_2.txt"
     thread1=myThread(1,"104",url,3,"https://125.224.233.167:3128",dest)
-    thread2=myThread(2,"1111",url1,2,"https:111.242.191.115:53281",dest1)
+    thread2=myThread1(2,"1111",url1,2,"https:111.242.191.115:53281",dest1)
     threads=[]
 
     try:
